@@ -6,6 +6,7 @@ const {
   getUserByUsername,
   getUser,
   getAllRoutinesByUser,
+  getPublicRoutinesByUser,
 } = require('../db');
 
 const jwt = require('jsonwebtoken');
@@ -88,13 +89,26 @@ router.get('/me', async (req, res, next) => {
 router.get('/:username/routines', async (req, res, next) => {
   try {
     const username = req.params.username;
-    // const user = await getUserByUsername(username);
-    const activities = await getAllRoutinesByUser({ username });
-    console.log({ activities });
-    // const activities = getActivities.map((a) => a.activities);
-    res.send({ activities });
+    // check if user is valid
+    const user = await getUserByUsername(username);
+    if (!user) {
+      // send error if not valid
+      next({
+        name: 'UserNotFoundError',
+        message: 'User Not Found',
+      });
+    } else if (user.id === req.user.id) {
+      // if user id matches the req user id (logged in)
+      const activities = await getAllRoutinesByUser({ username });
+      res.send(activities);
+    } else {
+      // get all public routines of user
+      const activities = await getPublicRoutinesByUser({ username });
+      res.send(activities);
+    }
   } catch (error) {
     console.error('error /:username/routines endpoint');
+    next(error);
   }
   // res.status(200).json({ message: 'username/routine endpoint' });
 });
