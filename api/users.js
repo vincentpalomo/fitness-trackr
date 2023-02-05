@@ -31,7 +31,7 @@ router.post('/register', async (req, res, next) => {
       });
     }
 
-    const newUser = await createUser(username, password);
+    const newUser = await createUser({ username, password });
     res.send({
       message: 'User successfully registered',
       newUser,
