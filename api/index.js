@@ -6,6 +6,7 @@ const { getUserById } = require('../db');
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = process.env;
 
+// check authorization
 router.use(async (req, res, next) => {
   const prefix = 'Bearer ';
   const auth = req.header('Authorization');
@@ -26,6 +27,14 @@ router.use(async (req, res, next) => {
       console.error('error with jwt assignment');
     }
   }
+});
+
+// set user
+router.use((req, res, next) => {
+  if (req.user) {
+    console.log('user is set:', req.user);
+  }
+  next();
 });
 
 // GET /api/health

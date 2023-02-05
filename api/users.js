@@ -7,7 +7,10 @@ const {
   getUser,
   getAllRoutinesByUser,
   getPublicRoutinesByUser,
+  getUserById,
 } = require('../db');
+
+const { requireUser } = require('./utils');
 
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = process.env;
@@ -79,7 +82,11 @@ router.post('/login', async (req, res, next) => {
 // GET /api/users/me
 router.get('/me', async (req, res, next) => {
   try {
-    res.send(req.user);
+    const userId = req.user.id;
+    const user = await getUserById(userId);
+    if (user) {
+      res.send(user);
+    }
   } catch (error) {
     next(error);
   }
@@ -110,7 +117,6 @@ router.get('/:username/routines', async (req, res, next) => {
     console.error('error /:username/routines endpoint');
     next(error);
   }
-  // res.status(200).json({ message: 'username/routine endpoint' });
 });
 
 module.exports = router;
