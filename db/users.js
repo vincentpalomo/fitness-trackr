@@ -1,4 +1,5 @@
 const client = require('./client');
+const bcrypt = require('bcrypt');
 
 // database functions
 
@@ -24,23 +25,34 @@ async function createUser({ username, password }) {
 
 async function getUser({ username, password }) {
   try {
-    const {
-      rows: [user],
-    } = await client.query(
-      `
-    SELECT username, password FROM users
-    WHERE username=$1 AND password=$2
-    `,
-      [username, password]
-    );
-    delete user.password;
-    return user;
+    const user = await getUserByUsername(username);
+
+    if (user.password === password) {
+      delete user.password;
+      return user;
+    }
   } catch (error) {
     console.error('error getUser fn', error);
   }
 }
 
-async function getUserById(userId) {}
+async function getUserById(userId) {
+  try {
+    const {
+      rows: [user],
+    } = await client.query(
+      `
+  SELECT id FROM users
+  WHERE id = $1
+  `,
+      [userId]
+    );
+
+    return user;
+  } catch (error) {
+    console.error('error getUserById fn', error);
+  }
+}
 
 async function getUserByUsername(username) {
   try {
