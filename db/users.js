@@ -1,11 +1,15 @@
 const client = require('./client');
 const bcrypt = require('bcrypt');
 
+const SALT_COUNT = 10;
+
 // database functions
 
 // user functions
 async function createUser({ username, password }) {
   try {
+    const hash = await bcrypt.hash(password, SALT_COUNT);
+
     const {
       rows: [user],
     } = await client.query(
@@ -14,7 +18,7 @@ async function createUser({ username, password }) {
     VALUES ($1, $2)
     RETURNING *
     `,
-      [username, password]
+      [username, hash]
     );
     delete user.password;
     return user;
@@ -26,13 +30,22 @@ async function createUser({ username, password }) {
 async function getUser({ username, password }) {
   try {
     const user = await getUserByUsername(username);
+    const hash = user.password;
 
-    if (user.password === password) {
+    let passwordsMatch = await bcrypt.compare(password, hash);
+    if (passwordsMatch) {
       delete user.password;
       return user;
     } else {
-      return null;
+      throw new Error('Passwords do not match');
     }
+
+    // if (user.password === password) {
+    //   delete user.password;
+    //   return user;
+    // } else {
+    //   return null;
+    // }
   } catch (error) {
     console.error('error getUser fn', error);
   }
