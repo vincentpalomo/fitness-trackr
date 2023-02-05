@@ -30,6 +30,8 @@ async function getUser({ username, password }) {
     if (user.password === password) {
       delete user.password;
       return user;
+    } else {
+      return null;
     }
   } catch (error) {
     console.error('error getUser fn', error);
