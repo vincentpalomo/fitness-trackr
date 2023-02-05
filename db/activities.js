@@ -2,11 +2,36 @@ const client = require('./client');
 
 // database functions
 async function createActivity({ name, description }) {
-  // return the new activity
+  try {
+    // return the new activity
+    const {
+      rows: [activity],
+    } = await client.query(
+      `
+    INSERT INTO activities (name, description)
+    VALUES ($1, $2)
+    RETURNING *
+    `,
+      [name, description]
+    );
+
+    return activity;
+  } catch (error) {
+    console.error('error createActivity fn', error);
+  }
 }
 
 async function getAllActivities() {
-  // select and return an array of all activities
+  try {
+    // select and return an array of all activities
+    const { rows: activities } = await client.query(`
+    SELECT * FROM activities
+    `);
+
+    return activities;
+  } catch (error) {
+    console.error('error getAllActivities fn', error);
+  }
 }
 
 async function getActivityById(id) {}
