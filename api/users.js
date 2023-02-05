@@ -1,7 +1,12 @@
 /* eslint-disable no-useless-catch */
 const express = require('express');
 const router = express.Router();
-const { createUser, getUserByUsername, getUser } = require('../db');
+const {
+  createUser,
+  getUserByUsername,
+  getUser,
+  getAllRoutinesByUser,
+} = require('../db');
 
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = process.env;
@@ -36,13 +41,7 @@ router.post('/register', async (req, res, next) => {
 
     const user = await createUser({ username, password });
 
-    const token = jwt.sign(
-      {
-        id: user.id,
-        password: password,
-      },
-      JWT_SECRET
-    );
+    const token = jwt.sign({ id: user.id, password: password }, JWT_SECRET);
 
     res.send({
       token,
@@ -51,14 +50,15 @@ router.post('/register', async (req, res, next) => {
     });
   } catch (error) {
     console.error('error register endpoint', error);
+    next(error);
   }
 });
+
 // POST /api/users/login
 router.post('/login', async (req, res, next) => {
   try {
     const { username, password } = req.body;
     const user = await getUser({ username, password });
-    console.log({ user });
 
     if (!username || !password) {
       next({
@@ -76,7 +76,23 @@ router.post('/login', async (req, res, next) => {
 });
 
 // GET /api/users/me
+router.get('/me', async (req, res, next) => {
+  res.status(200).json({ message: 'me endpoint requested' });
+});
 
 // GET /api/users/:username/routines
+router.get('/:username/routines', async (req, res, next) => {
+  try {
+    const username = req.params.username;
+    // const user = await getUserByUsername(username);
+    const activities = await getAllRoutinesByUser({ username });
+    console.log({ activities });
+    // const activities = getActivities.map((a) => a.activities);
+    res.send({ activities });
+  } catch (error) {
+    console.error('error /:username/routines endpoint');
+  }
+  // res.status(200).json({ message: 'username/routine endpoint' });
+});
 
 module.exports = router;
