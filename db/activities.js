@@ -45,7 +45,6 @@ async function getActivityById(id) {
     `,
       [id]
     );
-    console.log({ activity });
     return activity;
   } catch (error) {
     console.error('error getActivityById fn', error);
@@ -71,8 +70,24 @@ async function getActivityByName(name) {
 }
 
 async function attachActivitiesToRoutines(routines) {
-  // select and return an array of all activities
+  // try {
+  //   const {
+  //     rows: [activities],
+  //   } = await client.query(
+  //     `
+  // SELECT * FROM activities a
+  // JOIN routine_activities ra ON ra."activityId" = a.id
+  // `,
+  //     [routines]
+  //   );
+  //   console.log({ activities });
+  //   return activities;
+  // } catch (error) {
+  //   console.error('error attachActivitiesToRoutines fn', error);
+  // }
 }
+
+attachActivitiesToRoutines('Soccer');
 
 async function updateActivity({ id, ...fields }) {
   try {
