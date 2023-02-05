@@ -77,7 +77,11 @@ router.post('/login', async (req, res, next) => {
 
 // GET /api/users/me
 router.get('/me', async (req, res, next) => {
-  res.status(200).json({ message: 'me endpoint requested' });
+  try {
+    res.send(req.user);
+  } catch (error) {
+    next(error);
+  }
 });
 
 // GET /api/users/:username/routines
