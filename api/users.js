@@ -62,6 +62,7 @@ router.post('/register', async (req, res, next) => {
 router.post('/login', async (req, res, next) => {
   try {
     const { username, password } = req.body;
+    console.log({ username, password });
     const user = await getUser({ username, password });
 
     if (!username || !password) {
@@ -95,9 +96,12 @@ router.get('/me', async (req, res, next) => {
 // GET /api/users/:username/routines
 router.get('/:username/routines', async (req, res, next) => {
   try {
+    console.log('username/routines');
     const username = req.params.username;
+    console.log({ username });
     // check if user is valid
     const user = await getUserByUsername(username);
+    console.log({ user });
     if (!user) {
       // send error if not valid
       next({
