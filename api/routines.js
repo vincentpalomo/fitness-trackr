@@ -58,21 +58,25 @@ router.patch('/:routineId', requireUser, async (req, res, next) => {
 
 // DELETE /api/routines/:routineId
 router.delete('/:routineId', requireUser, async (req, res, next) => {
-  const id = req.params.routineId;
-  console.log({ id });
-  const routine = await getRoutineById(id);
-  console.log({ routine });
-  if (routine && routine.creatorId === req.user.id) {
-    const deleteRoutine = await destroyRoutine(id);
-    console.log({ deleteRoutine });
-    res.send(deleteRoutine);
-  } else {
-    res.status(403);
-    next({
-      error: 'UnauthorizedDeleteError',
-      name: 'UnauthorizedDeleteError',
-      message: `User ${req.user.username} is not allowed to delete On even days`,
-    });
+  try {
+    const id = req.params.routineId;
+    console.log({ id });
+    const routine = await getRoutineById(id);
+    console.log({ routine });
+    if (routine && routine.creatorId === req.user.id) {
+      const deleteRoutine = await destroyRoutine(id);
+      console.log({ deleteRoutine });
+      res.send(deleteRoutine);
+    } else {
+      res.status(403);
+      next({
+        error: 'UnauthorizedDeleteError',
+        name: 'UnauthorizedDeleteError',
+        message: `User ${req.user.username} is not allowed to delete On even days`,
+      });
+    }
+  } catch (error) {
+    next(error);
   }
 });
 
