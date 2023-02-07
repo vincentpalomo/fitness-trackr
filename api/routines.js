@@ -64,6 +64,7 @@ router.delete('/:routineId', requireUser, async (req, res, next) => {
   console.log({ routine });
   if (routine && routine.creatorId === req.user.id) {
     const deleteRoutine = await destroyRoutine(id);
+    console.log({ deleteRoutine });
     res.send(deleteRoutine);
   } else {
     res.status(403);
