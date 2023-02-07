@@ -7,7 +7,6 @@ const {
   getUser,
   getAllRoutinesByUser,
   getPublicRoutinesByUser,
-  getUserById,
 } = require('../db');
 
 const { requireUser } = require('./utils');
@@ -15,10 +14,10 @@ const { requireUser } = require('./utils');
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = process.env;
 
-router.use((req, res, next) => {
-  console.log('request being made to users');
-  next();
-});
+// router.use((req, res, next) => {
+//   console.log('request being made to users');
+//   next();
+// });
 
 // POST /api/users/register
 router.post('/register', async (req, res, next) => {
@@ -62,7 +61,6 @@ router.post('/register', async (req, res, next) => {
 router.post('/login', async (req, res, next) => {
   try {
     const { username, password } = req.body;
-    console.log({ username, password });
     const user = await getUser({ username, password });
 
     if (!username || !password) {
@@ -81,13 +79,11 @@ router.post('/login', async (req, res, next) => {
 });
 
 // GET /api/users/me
-router.get('/me', async (req, res, next) => {
+router.get('/me', requireUser, async (req, res, next) => {
   try {
-    const userId = req.user.id;
-    const user = await getUserById(userId);
-    if (user) {
-      res.send(user);
-    }
+    const user = req.user;
+
+    res.send(user);
   } catch (error) {
     next(error);
   }
@@ -96,12 +92,9 @@ router.get('/me', async (req, res, next) => {
 // GET /api/users/:username/routines
 router.get('/:username/routines', async (req, res, next) => {
   try {
-    console.log('username/routines');
     const username = req.params.username;
-    console.log({ username });
     // check if user is valid
     const user = await getUserByUsername(username);
-    console.log({ user });
     if (!user) {
       // send error if not valid
       next({

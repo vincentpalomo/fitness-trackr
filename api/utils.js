@@ -1,13 +1,16 @@
 // check if user is logged in
-const requireUser = (req, res, next) => {
-  if (!req.user) {
+function requireUser(req, res, next) {
+  if (req.user) {
+    console.log('passed', req.user);
+    next();
+  } else {
+    console.log('failed', req.user);
     res.status(401);
     next({
       name: 'MissingUserError',
       message: 'You must be logged in to perform this action',
     });
   }
-  next();
-};
+}
 
-module.exports = requireUser;
+module.exports = { requireUser };

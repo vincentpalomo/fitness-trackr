@@ -30,12 +30,12 @@ router.use(async (req, res, next) => {
 });
 
 // set user
-router.use((req, res, next) => {
-  if (req.user) {
-    console.log('user is set:', req.user);
-  }
-  next();
-});
+// router.use((req, res, next) => {
+//   if (req.user) {
+//     console.log('user is set:', req.user);
+//   }
+//   next();
+// });
 
 // GET /api/health
 router.get('/health', async (req, res, next) => {
@@ -71,8 +71,10 @@ router.get('*', async (req, res, next) => {
   }
 });
 
+// error handler
 router.use((error, req, res, next) => {
   res.send({
+    error: 'error',
     name: error.name,
     message: error.message,
   });
