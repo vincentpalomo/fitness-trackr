@@ -3,9 +3,9 @@ name: FitnessTrackr Tests
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
-    branches: [master]
+    branches: [main]
 
 env:
   JWT_SECRET: TOPSECRET
