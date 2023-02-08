@@ -19,5 +19,5 @@ jobs:
       - name: Run Tests
         run: |
           npm install 
-          npm run server:dev &
+          npm run start:dev &
           npm test
