@@ -85,7 +85,6 @@ router.post('/:routineId/activities', async (req, res, next) => {
     const id = req.params.routineId;
     const { routineId, activityId, count, duration } = req.body;
     console.log({ id });
-    console.log({ routineId, activityId, count, duration });
 
     const activity = await addActivityToRoutine({
       routineId,
