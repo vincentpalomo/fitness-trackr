@@ -70,6 +70,10 @@ router.post('/login', async (req, res, next) => {
     res.send({ user, message: "you're logged in!", token });
   } catch (error) {
     console.error('error login endpoint', error);
+    next({
+      error: 'PasswordInvalid',
+      message: 'Incorrect Password',
+    });
   }
 });
 
