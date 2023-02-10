@@ -38,6 +38,7 @@ router.get('/', async (req, res, next) => {
     res.send(activities);
   } catch (error) {
     console.error('error get activities/ endpoint', error);
+    next(error);
   }
 });
 

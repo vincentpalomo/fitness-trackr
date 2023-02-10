@@ -27,7 +27,15 @@ router.post('/', requireUser, async (req, res, next) => {
     const creatorId = req.user.id;
 
     const newRoutine = await createRoutine({ creatorId, isPublic, name, goal });
-    res.send(newRoutine);
+
+    if (!newRoutine) {
+      next({
+        error: 'create routine already exists',
+        message: `Routine ${req.body.name} already exists`,
+      });
+    } else {
+      res.send(newRoutine);
+    }
   } catch (error) {
     next(error);
   }
