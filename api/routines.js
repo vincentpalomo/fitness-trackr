@@ -36,21 +36,31 @@ router.post('/', requireUser, async (req, res, next) => {
 // PATCH /api/routines/:routineId
 router.patch('/:routineId', requireUser, async (req, res, next) => {
   try {
-    //get a routineId from params
     const id = req.params.routineId;
     const { isPublic, name, goal } = req.body;
+    const username = req.user.username;
+    const userId = req.user.id;
 
-    const routine = await updateRoutine({ id, isPublic, name, goal });
-    // check if routine id is matching req.user id
-    if (routine.id === req.user.id) {
-      res.send(routine);
-    } else {
+    const routine = await getRoutineById(id);
+
+    if (!routine) {
+      next({
+        error: 'UnauthorizedError',
+        name: 'UnauthorizedUpdateError',
+        message: `No routine by ${id} was found`,
+      });
+    }
+
+    if (routine.creatorId !== userId) {
       res.status(403);
       next({
         error: 'UnauthorizedError',
         name: 'UnauthorizedUpdateError',
-        message: `User ${req.user.username} is not allowed to update Every day`,
+        message: `User ${username} is not allowed to update Every day`,
       });
+    } else {
+      const modRoutine = await updateRoutine({ id, isPublic, name, goal });
+      res.send(modRoutine);
     }
   } catch (error) {
     next(error);

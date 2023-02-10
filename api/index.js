@@ -29,14 +29,6 @@ router.use(async (req, res, next) => {
   }
 });
 
-// set user
-// router.use((req, res, next) => {
-//   if (req.user) {
-//     console.log('user is set:', req.user);
-//   }
-//   next();
-// });
-
 // GET /api/health
 router.get('/health', async (req, res, next) => {
   try {

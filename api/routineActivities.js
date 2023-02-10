@@ -11,14 +11,12 @@ const { requireUser } = require('./utils');
 // PATCH /api/routine_activities/:routineActivityId
 router.patch('/:routineActivityId', requireUser, async (req, res, next) => {
   try {
-    const { routineActivityId } = req.params;
+    const id = req.params.routineActivityId;
     const { count, duration } = req.body;
-    const { id, username } = req.user;
+    const userId = req.user.id;
+    const username = req.user.username;
 
-    const existingRoutineActivity = await canEditRoutineActivity(
-      routineActivityId,
-      id
-    );
+    const existingRoutineActivity = await canEditRoutineActivity(id, userId);
 
     if (!existingRoutineActivity) {
       next({
