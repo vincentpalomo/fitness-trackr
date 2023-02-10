@@ -90,8 +90,8 @@ router.get('/me', requireUser, async (req, res, next) => {
 
 // GET /api/users/:username/routines
 router.get('/:username/routines', async (req, res, next) => {
+  const username = req.params.username;
   try {
-    const username = req.params.username;
     // check if user is valid
     const user = await getUserByUsername(username);
     if (!user) {
@@ -111,7 +111,10 @@ router.get('/:username/routines', async (req, res, next) => {
     }
   } catch (error) {
     console.error('error /:username/routines endpoint');
-    next(error);
+    next({
+      error: 'NoRoutinesFound',
+      message: `No routines have been set by ${username}`,
+    });
   }
 });
 
