@@ -1,5 +1,9 @@
 const express = require('express');
-const { canEditRoutineActivity, updateRoutineActivity } = require('../db');
+const {
+  canEditRoutineActivity,
+  updateRoutineActivity,
+  destroyRoutineActivity,
+} = require('../db');
 const router = express.Router();
 
 const { requireUser } = require('./utils');
@@ -36,5 +40,30 @@ router.patch('/:routineActivityId', requireUser, async (req, res, next) => {
 });
 
 // DELETE /api/routine_activities/:routineActivityId
+router.delete('/:routineActivityId', requireUser, async (req, res, next) => {
+  const { routineActivityId } = req.params;
+  const { id, username } = req.user;
+
+  const existingActivity = await canEditRoutineActivity(routineActivityId, id);
+
+  if (!existingActivity) {
+    res.status(403);
+    next(
+      !existingActivity
+        ? {
+            error: 'error',
+            name: 'name',
+            message: `User ${username} is not allowed to delete In the afternoon`,
+          }
+        : {
+            name: 'name',
+            message: 'message',
+          }
+    );
+  } else {
+    const deleteRoutine = await destroyRoutineActivity(routineActivityId);
+    res.send(deleteRoutine);
+  }
+});
 
 module.exports = router;
