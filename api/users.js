@@ -14,11 +14,6 @@ const { requireUser } = require('./utils');
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = process.env;
 
-// router.use((req, res, next) => {
-//   console.log('request being made to users');
-//   next();
-// });
-
 // POST /api/users/register
 router.post('/register', async (req, res, next) => {
   const { username, password } = req.body;
